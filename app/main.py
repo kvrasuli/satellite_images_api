@@ -1,10 +1,14 @@
-from fastapi import FastAPI, Body
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import Response
-from fastapi.exceptions import HTTPException
-from geojson_pydantic import FeatureCollection
-from bson.objectid import ObjectId
+import aiofiles
 import motor.motor_asyncio
+from bson.objectid import ObjectId
+from bson import json_util
+from fastapi import Body, FastAPI
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import HTTPException
+from fastapi.responses import FileResponse, Response
+from geojson_pydantic import FeatureCollection
+
+from app.download import download_image
 
 client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
 db = client.fields
@@ -43,6 +47,11 @@ async def get_ndvi_for_field():
     field = await db["fields"].find_one({"_id": ObjectId(id)})
 
 
-@app.get("/fields/{id}/image")
-async def get_image_for_field():
+@app.get("/fields/{id}/image/{band}")
+async def get_image_for_field(id: str, band: str):
     field = await db["fields"].find_one({"_id": ObjectId(id)})
+    async with aiofiles.open(f"{field['_id']}.geojson", mode="w") as file:
+        await file.write(json_util.dumps(field))
+    filename = f"{field['_id']}.geojson"
+    await download_image(filename, band)
+    return FileResponse(f"{filename}_band{band}.jp2")
