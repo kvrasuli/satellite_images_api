@@ -1,7 +1,8 @@
-from sentinelsat import SentinelAPI, read_geojson, geojson_to_wkt
-from urllib.parse import urljoin
-import requests
 import argparse
+from urllib.parse import urljoin
+
+import requests
+from sentinelsat import SentinelAPI, geojson_to_wkt, read_geojson
 
 
 def get_uuid_of_product(username, password, filename) -> str:
@@ -42,7 +43,7 @@ def get_url_for_image(username, password, prod_id, band):
     bands = api.get(urljoin(api_url, url))
     bands.raise_for_status()
     # element 3 is band 4, element 4 band 8
-    element = 3 if band == '4' else 4 if band == '8' else None
+    element = 3 if band == "4" else 4 if band == "8" else None
     band_id = bands.json()["d"]["results"][element]["Id"]
 
     url = f"Products('{prod_id}')/Nodes('{prod_name}')/Nodes('GRANULE')/Nodes('{gran_id}')/Nodes('IMG_DATA')/Nodes('R10m')/Nodes('{band_id}')/$value"
@@ -63,7 +64,7 @@ def parse_args():
     parser.add_argument("--filename", help="path to geojson")
     parser.add_argument("--band", help="number of band")
     args = parser.parse_args()
-    return  args.username, args.password, args.filename, args.band
+    return args.username, args.password, args.filename, args.band
 
 
 if __name__ == "__main__":

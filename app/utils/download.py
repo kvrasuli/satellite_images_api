@@ -1,13 +1,15 @@
 import asyncio
-from dotenv import load_dotenv
 import os
 
+from dotenv import load_dotenv
+
 load_dotenv()
+
 
 async def download_image(filename, band):
     downloading_process = await asyncio.create_subprocess_exec(
         "python3",
-        "app/image.py",
+        "app/utils/image.py",
         "--username",
         os.getenv("COPERNICUS_USERNAME"),
         "--password",
