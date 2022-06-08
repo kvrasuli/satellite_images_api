@@ -1,8 +1,9 @@
+import os
 from motor.motor_asyncio import AsyncIOMotorClient
 
-MONGO_URL = "mongodb://localhost:27017"
+mongo_url = os.getenv("MONGO_URL")
 
-client = AsyncIOMotorClient(MONGO_URL)
+client = AsyncIOMotorClient(mongo_url)
 database = client.fields
 
 collection = database["fields"]
