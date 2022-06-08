@@ -1,20 +1,20 @@
-from sentinelsat import SentinelAPI, read_geojson, geojson_to_wkt, make_path_filter
-import os
+from sentinelsat import SentinelAPI, read_geojson, geojson_to_wkt
 from urllib.parse import urljoin
 import requests
+import argparse
 
 
-def get_uuid_of_product() -> str:
+def get_uuid_of_product(username, password, filename) -> str:
     api = SentinelAPI(
-        os.getenv("COPERNICUS_USERNAME"),
-        os.getenv("COPERNICUS_PASSWORD"),
+        username,
+        password,
         "https://scihub.copernicus.eu/dhus/",
     )
 
-    footprint = geojson_to_wkt(read_geojson("map.geojson"))
+    footprint = geojson_to_wkt(read_geojson(filename))
     products = api.query(
         footprint,
-        date=("NOW-30DAY", "NOW"),
+        date=("NOW-60DAY", "NOW"),
         platformname="Sentinel-2",
         area_relation="Intersects",
         limit=1,
@@ -23,13 +23,9 @@ def get_uuid_of_product() -> str:
     return list(products.keys())[0]
 
 
-def get_url_for_image(prod_id: str):
+def get_url_for_image(username, password, prod_id, band):
     api = requests.Session()
-    api.auth = (
-        os.getenv("COPERNICUS_USERNAME"),
-        os.getenv("COPERNICUS_PASSWORD"),
-    )
-    print
+    api.auth = (username, password)
     api_url = "https://scihub.copernicus.eu/dhus/odata/v1/"
 
     url = f"Products('{prod_id}')/Nodes?$format=json"
@@ -46,27 +42,32 @@ def get_url_for_image(prod_id: str):
     bands = api.get(urljoin(api_url, url))
     bands.raise_for_status()
     # element 3 is band 4, element 4 band 8
-    band_id = bands.json()["d"]["results"][3]["Id"]
+    element = 3 if band == '4' else 4 if band == '8' else None
+    band_id = bands.json()["d"]["results"][element]["Id"]
 
     url = f"Products('{prod_id}')/Nodes('{prod_name}')/Nodes('GRANULE')/Nodes('{gran_id}')/Nodes('IMG_DATA')/Nodes('R10m')/Nodes('{band_id}')/$value"
     return urljoin(api_url, url)
 
 
-def download_picture(url: str):
-    response = requests.get(
-        url,
-        auth=(
-            os.getenv("COPERNICUS_USERNAME"),
-            os.getenv("COPERNICUS_PASSWORD"),
-        ),
-    )
+def download_picture(username, password, url, band, filename):
+    response = requests.get(url, auth=(username, password))
     response.raise_for_status()
-    with open("ddd.jp2", "wb") as image:
+    with open(f"{filename}_band{band}.jp2", "wb") as image:
         image.write(response.content)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--username", help="copernicus username")
+    parser.add_argument("--password", help="copernicus password")
+    parser.add_argument("--filename", help="path to geojson")
+    parser.add_argument("--band", help="number of band")
+    args = parser.parse_args()
+    return  args.username, args.password, args.filename, args.band
+
+
 if __name__ == "__main__":
-    
-    prod_id = get_uuid_of_product()
-    url = get_url_for_image(prod_id)
-    download_picture(url)
+    username, password, filename, band = parse_args()
+    prod_id = get_uuid_of_product(username, password, filename)
+    url = get_url_for_image(username, password, prod_id, band)
+    download_picture(username, password, url, band, filename)
