@@ -51,4 +51,9 @@ async def get_image_for_field(id: str, band: str):
         await file.write(json_util.dumps(field))
     filename = f"{field['_id']}.geojson"
     await download_image(filename, band)
-    return FileResponse(f"{filename}_band{band}.jp2")
+    image_filename = f"{filename}_band{band}.jp2"
+    return FileResponse(
+        image_filename,
+        media_type="image/jp2",
+        filename=image_filename,
+    )
