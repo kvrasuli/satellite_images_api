@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "8c957c1a-90c5-40c4-8a2e-beb98275dad5",
+		"name": "sattelite_images_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20719020"
+	},
+	"item": [
+		{
+			"name": "create a field",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"FeatureCollection\",\r\n    \"features\": [\r\n      {\r\n        \"type\": \"Feature\",\r\n        \"properties\": {},\r\n        \"geometry\": {\r\n          \"type\": \"Polygon\",\r\n          \"coordinates\": [\r\n            [\r\n              [\r\n                48.365421295166016,\r\n                55.86144097132764\r\n              ],\r\n              [\r\n                48.382158279418945,\r\n                55.86144097132764\r\n              ],\r\n              [\r\n                48.382158279418945,\r\n                55.871940143741604\r\n              ],\r\n              [\r\n                48.365421295166016,\r\n                55.871940143741604\r\n              ],\r\n              [\r\n                48.365421295166016,\r\n                55.86144097132764\r\n              ]\r\n            ]\r\n          ]\r\n        }\r\n      }\r\n    ]\r\n  }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ec2-3-122-231-1.eu-central-1.compute.amazonaws.com:8449/fields/",
+					"protocol": "http",
+					"host": [
+						"ec2-3-122-231-1",
+						"eu-central-1",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"port": "8449",
+					"path": [
+						"fields",
+						""
+					]
+				},
+				"description": "Create a field"
+			},
+			"response": []
+		},
+		{
+			"name": "get a field",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ec2-3-122-231-1.eu-central-1.compute.amazonaws.com:8449/fields/62a3303332b01aeb8228ebdb",
+					"protocol": "http",
+					"host": [
+						"ec2-3-122-231-1",
+						"eu-central-1",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"port": "8449",
+					"path": [
+						"fields",
+						"62a3303332b01aeb8228ebdb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get an image (band 4) for a field",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ec2-3-122-231-1.eu-central-1.compute.amazonaws.com:8449/fields/62a3303332b01aeb8228ebdb/image/4",
+					"protocol": "http",
+					"host": [
+						"ec2-3-122-231-1",
+						"eu-central-1",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"port": "8449",
+					"path": [
+						"fields",
+						"62a3303332b01aeb8228ebdb",
+						"image",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete a field",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://ec2-3-122-231-1.eu-central-1.compute.amazonaws.com:8449/fields/62a3303332b01aeb8228ebdb",
+					"protocol": "http",
+					"host": [
+						"ec2-3-122-231-1",
+						"eu-central-1",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"port": "8449",
+					"path": [
+						"fields",
+						"62a3303332b01aeb8228ebdb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get ndvi for a field",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ec2-3-122-231-1.eu-central-1.compute.amazonaws.com:8449/fields/62a3303332b01aeb8228ebdb/ndvi",
+					"protocol": "http",
+					"host": [
+						"ec2-3-122-231-1",
+						"eu-central-1",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"port": "8449",
+					"path": [
+						"fields",
+						"62a3303332b01aeb8228ebdb",
+						"ndvi"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
